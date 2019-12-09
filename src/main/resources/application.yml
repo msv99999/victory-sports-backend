@@ -1,0 +1,10 @@
+spring:
+     datasource:
+           url: {JDBC_DATABASE_URL}
+           username: ${JDBC_DATABASE_USERNAME}
+#            password: ${JDBC_DATABASE_PASSWORD}
+amazonProperties:
+     endpointUrl: "https://s3.us-east-1.amazonaws.com"
+     accessKey: "AKIAIM756AXT35OYYGYQ"
+     secretKey: "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"
+     bucketName: "victorysports"
