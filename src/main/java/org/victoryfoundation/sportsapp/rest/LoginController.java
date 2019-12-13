@@ -8,10 +8,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 import org.victoryfoundation.sportsapp.dao.UserRepository;
 import org.victoryfoundation.sportsapp.domains.LoginRequest;
-import org.victoryfoundation.sportsapp.domains.LoginResponse;
-import org.victoryfoundation.sportsapp.entity.User;
-
-import java.util.UUID;
 
 @RestController
 public class LoginController {

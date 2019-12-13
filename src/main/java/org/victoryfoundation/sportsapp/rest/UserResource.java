@@ -10,7 +10,6 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import org.victoryfoundation.sportsapp.dao.UserRepository;
 import org.victoryfoundation.sportsapp.entity.Coach;
 import org.victoryfoundation.sportsapp.entity.Sport;
-import org.victoryfoundation.sportsapp.entity.Student;
 import org.victoryfoundation.sportsapp.entity.User;
 import org.victoryfoundation.sportsapp.entity.UserType;
 import org.victoryfoundation.sportsapp.service.AmazonClient;

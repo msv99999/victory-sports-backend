@@ -58,7 +58,7 @@ public class HubItemController {
 	}
 
 	@Transactional
-	private HubItem processHubItem(HubItemModel hubItemModel) throws Exception {
+	protected HubItem processHubItem(HubItemModel hubItemModel) throws Exception {
 		HubItem response=null;
 		try {
 			HubItem hubItem = new HubItem();

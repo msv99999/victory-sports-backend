@@ -18,4 +18,20 @@ public class AttendanceKey implements Serializable {
     @ManyToOne
     @JoinColumn(name = "activity_id", referencedColumnName = "activity_id")
     private Activity activity;
+
+    public Student getStudent() {
+        return student;
+    }
+
+    public void setStudent(Student student) {
+        this.student = student;
+    }
+
+    public Activity getActivity() {
+        return activity;
+    }
+
+    public void setActivity(Activity activity) {
+        this.activity = activity;
+    }
 }
