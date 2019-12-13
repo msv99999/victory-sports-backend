@@ -10,6 +10,7 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import org.victoryfoundation.sportsapp.dao.UserRepository;
 import org.victoryfoundation.sportsapp.entity.Coach;
 import org.victoryfoundation.sportsapp.entity.Sport;
+import org.victoryfoundation.sportsapp.entity.Student;
 import org.victoryfoundation.sportsapp.entity.User;
 import org.victoryfoundation.sportsapp.entity.UserType;
 import org.victoryfoundation.sportsapp.service.AmazonClient;
@@ -42,9 +43,17 @@ public class UserResource {
         return user.get();
     }
 
+    @PutMapping("/users/{id}")
+    public User updateUserDetails(@PathVariable long id, @RequestBody User user) {
+        User oldUser = userRepository.findById(id);
+        if(oldUser == null) return null;
+        oldUser.setStatus(user.getStatus());
+        oldUser.setUpdatedOn(Instant.now().toEpochMilli());
+        return userRepository.save(oldUser);
+    }
+
     @PostMapping("/users")
     public ResponseEntity<Object> createUser(@RequestBody User user) {
-
 
         user.setCreatedOn(Instant.now().toEpochMilli());
         user.setUpdatedOn(Instant.now().toEpochMilli());
@@ -132,12 +141,10 @@ public class UserResource {
 
     @GetMapping("/users/logon")
     public User findByUserId(@RequestParam("username") String id) {
-
         Optional<User> user = Optional.ofNullable(userRepository.findByUsername(id));
         if(!user.isPresent())
             throw new ResourceNotFoundException("logonId-" + id);
         return user.get();
-
     }
 
 
