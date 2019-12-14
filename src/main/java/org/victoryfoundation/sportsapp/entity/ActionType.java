@@ -20,4 +20,19 @@ public class ActionType {
     @Column(name = "default_score")
     private double defaultScore;
 
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public double getDefaultScore() {
+        return defaultScore;
+    }
+
+    public void setDefaultScore(double defaultScore) {
+        this.defaultScore = defaultScore;
+    }
 }

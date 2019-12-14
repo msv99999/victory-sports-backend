@@ -65,7 +65,7 @@ public class HubController {
 	}
 
 	@Transactional
-	private Hub processHub(Hub hub) throws Exception {
+	protected Hub processHub(Hub hub) throws Exception {
 		Hub response = null;
 		try {
 			Set<HubItem> items = hub.getHubItems();

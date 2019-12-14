@@ -14,10 +14,6 @@ import org.victoryfoundation.sportsapp.entity.StudentStatus;
 import org.victoryfoundation.sportsapp.service.AmazonClient;
 
 import java.net.URI;
-import java.text.DateFormat;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.time.Instant;
 import java.util.Date;
 import java.util.List;
 
@@ -48,16 +44,34 @@ public class StudentResource {
     @PutMapping("/student/{id}/family")
     public Student updateFamilyDetails(@PathVariable long id, Student studentRequest) {
         Student student = studentRepository.findById(id).get();
-        if(student == null) return null;
-
-        student.setFatherName(studentRequest.getFatherName());
-        student.setFatherOccupation(studentRequest.getFatherOccupation());
-        student.setFatherIncome(studentRequest.getFatherIncome());
-        student.setMotherIncome(studentRequest.getMotherIncome());
-        student.setMotherName(studentRequest.getMotherName());
-        student.setMotherOccupation(studentRequest.getMotherOccupation());
-
+        if(student == null) {
+            return null;
+        }
+        setStudentFamilyDetail(student, studentRequest);
         return studentRepository.save(student);
+    }
+
+    @PutMapping("/student/{id}")
+    public Student updateStudentDetails(@PathVariable long id, @RequestBody Student studentRequest) {
+        Student savedStudent = studentRepository.findById(id).get();
+        if(savedStudent == null){
+            return null;
+        }
+        savedStudent.setWeight(studentRequest.getWeight());
+        savedStudent.setAadhar(studentRequest.getAadhar());
+        savedStudent.setActive(studentRequest.getActive());
+        savedStudent.setCourse(studentRequest.getCourse());
+        savedStudent.setHeight(studentRequest.getHeight());
+        savedStudent.setJersySize(studentRequest.getJersySize());
+        savedStudent.setSibblings(studentRequest.getSibblings());
+        savedStudent.setLandMark(studentRequest.getLandMark());
+        savedStudent.setAddress(studentRequest.getAddress());
+        savedStudent.setShoeSize(studentRequest.getShoeSize());
+        savedStudent.setStudentName(studentRequest.getStudentName());
+        savedStudent.setEducationalInstitution(studentRequest.getEducationalInstitution());
+        savedStudent.setPostOffice(studentRequest.getPostOffice());
+        setStudentFamilyDetail(savedStudent, studentRequest);
+        return studentRepository.save(savedStudent);
     }
 
 
@@ -151,5 +165,14 @@ public class StudentResource {
         student.setHubId(hub);
         student.setSportId(sport);
         student.setStatus(studentStatus);
+    }
+
+    private void setStudentFamilyDetail(Student oldStudent, Student newStudent){
+        oldStudent.setFatherName(newStudent.getFatherName());
+        oldStudent.setFatherOccupation(newStudent.getFatherOccupation());
+        oldStudent.setFatherIncome(newStudent.getFatherIncome());
+        oldStudent.setMotherIncome(newStudent.getMotherIncome());
+        oldStudent.setMotherName(newStudent.getMotherName());
+        oldStudent.setMotherOccupation(newStudent.getMotherOccupation());
     }
 }

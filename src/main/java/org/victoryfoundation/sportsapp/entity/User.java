@@ -58,7 +58,7 @@ public class User {
 
     }
 
-    @OneToOne(cascade = {CascadeType.ALL},optional = true)
+    @OneToOne(cascade = {CascadeType.ALL}, optional = true)
     @JoinColumn(name="coach_id",referencedColumnName = "coach_id", unique= true, nullable=true, insertable=true, updatable=true)
     private Coach coach;
 

@@ -37,4 +37,60 @@ public class Activity {
     @JsonManagedReference("activity")*/
     @Transient
     private List<ActivityDetail> detail;
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public Long getCreatedOn() {
+        return createdOn;
+    }
+
+    public void setCreatedOn(Long createdOn) {
+        this.createdOn = createdOn;
+    }
+
+    public Long getUpdatedOn() {
+        return updatedOn;
+    }
+
+    public void setUpdatedOn(Long updatedOn) {
+        this.updatedOn = updatedOn;
+    }
+
+    public Coach getCoach() {
+        return coach;
+    }
+
+    public void setCoach(Coach coach) {
+        this.coach = coach;
+    }
+
+    public long getHubId() {
+        return hubId;
+    }
+
+    public void setHubId(long hubId) {
+        this.hubId = hubId;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
+    }
+
+    public List<ActivityDetail> getDetail() {
+        return detail;
+    }
+
+    public void setDetail(List<ActivityDetail> detail) {
+        this.detail = detail;
+    }
 }

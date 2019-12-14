@@ -11,4 +11,20 @@ import java.util.List;
 public class AttendanceRequest {
     private Long activityId;
     private List<Long> studentIds;
+
+    public Long getActivityId() {
+        return activityId;
+    }
+
+    public void setActivityId(Long activityId) {
+        this.activityId = activityId;
+    }
+
+    public List<Long> getStudentIds() {
+        return studentIds;
+    }
+
+    public void setStudentIds(List<Long> studentIds) {
+        this.studentIds = studentIds;
+    }
 }

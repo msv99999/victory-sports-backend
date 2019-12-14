@@ -1,8 +1,8 @@
 package org.victoryfoundation.sportsapp.rest;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.rest.webmvc.ResourceNotFoundException;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -10,15 +10,16 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import org.victoryfoundation.sportsapp.dao.UserRepository;
 import org.victoryfoundation.sportsapp.entity.Coach;
 import org.victoryfoundation.sportsapp.entity.Sport;
-import org.victoryfoundation.sportsapp.entity.Student;
 import org.victoryfoundation.sportsapp.entity.User;
 import org.victoryfoundation.sportsapp.entity.UserType;
+import org.victoryfoundation.sportsapp.exception.ResourceNotFoundException;
 import org.victoryfoundation.sportsapp.service.AmazonClient;
 
 import java.net.URI;
 import java.time.Instant;
 import java.util.List;
 import java.util.Optional;
+import org.victoryfoundation.sportsapp.utils.ResponseBuilder;
 
 @RestController
 public class UserResource {
@@ -29,56 +30,64 @@ public class UserResource {
     @Autowired
     UserRepository userRepository;
 
-    @GetMapping("/users")
+    @GetMapping(value = "/users", produces = {MediaType.APPLICATION_JSON_VALUE})
     public List<User> getAllUsers() {
         return userRepository.findAll();
     }
 
-    @GetMapping("/users/{id}")
+    @GetMapping(value = "/users/{id}", produces = {MediaType.APPLICATION_JSON_VALUE})
     public User findById(@PathVariable long id) {
-
-        Optional<User> user = Optional.of(userRepository.findById(id));
+        Optional<User> user = Optional.ofNullable(userRepository.findById(id));
         if (!user.isPresent())
-            throw new ResourceNotFoundException("id-" + id);
+            throw new ResourceNotFoundException("No user found with ID: " + id);
         return user.get();
     }
 
-    @PutMapping("/users/{id}")
-    public User updateUserDetails(@PathVariable long id, @RequestBody User user) {
-        User oldUser = userRepository.findById(id);
-        if(oldUser == null) return null;
-        oldUser.setStatus(user.getStatus());
-        oldUser.setUpdatedOn(Instant.now().toEpochMilli());
-        return userRepository.save(oldUser);
+    @PutMapping(value = "/users/{id}", produces = {MediaType.APPLICATION_JSON_VALUE})
+    public ResponseEntity<Object> updateUserDetails(@PathVariable long id, @RequestBody User user) {
+        User updatedUser;
+        try {
+            User oldUser = userRepository.findById(id);
+            if (oldUser == null) {
+                return ResponseBuilder.buildErrorResponse("No User exist with ID :" + id , HttpStatus.NOT_FOUND);
+            }
+            oldUser.setStatus(user.getStatus());
+            oldUser.setUpdatedOn(Instant.now().toEpochMilli());
+            updatedUser = userRepository.save(oldUser);
+        }catch (Exception e){
+            return ResponseBuilder.buildErrorResponse("Error occurred while updating user details" + id , HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+        return ResponseBuilder.buildResponse(updatedUser, HttpStatus.OK);
     }
 
-    @PostMapping("/users")
+    @PostMapping(value = "/users", produces = {MediaType.APPLICATION_JSON_VALUE})
     public ResponseEntity<Object> createUser(@RequestBody User user) {
-
-        user.setCreatedOn(Instant.now().toEpochMilli());
-        user.setUpdatedOn(Instant.now().toEpochMilli());
-        User savedUser = userRepository.save(user);
-
-        Optional<Coach> coach= Optional.ofNullable(savedUser.getCoach());
-        if(coach.isPresent()){
-            if(savedUser.getRole().getId()!=31){
-                ResponseEntity<Object>  res= new ResponseEntity<>(
-                        ResponseEntity.badRequest(),
-                        HttpStatus.BAD_REQUEST);
+        ResponseEntity<Object> res;
+        try {
+            user.setCreatedOn(Instant.now().toEpochMilli());
+            user.setUpdatedOn(Instant.now().toEpochMilli());
+            User savedUser = userRepository.save(user);
+            Optional<Coach> coach = Optional.ofNullable(savedUser.getCoach());
+            if (coach.isPresent()) {
+                if (savedUser.getRole().getId() != 31) {
+                    return ResponseBuilder.buildErrorResponse("User not have permission to add Coach ", HttpStatus.FORBIDDEN);
+                }
             }
+            URI location = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}")
+                    .buildAndExpand(savedUser.getId()).toUri();
+
+            res = new ResponseEntity<>(
+                    ResponseEntity.created(location).build(),
+                    HttpStatus.CREATED);
+        }catch (Exception e){
+            res = ResponseBuilder.buildErrorResponse("Exception occurred while creating user", e, HttpStatus.INTERNAL_SERVER_ERROR);
+            e.printStackTrace();
         }
-        URI location = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}")
-                .buildAndExpand(savedUser.getId()).toUri();
-
-        ResponseEntity<Object>  res= new ResponseEntity<>(
-                ResponseEntity.created(location).build(),
-                HttpStatus.CREATED);
-
         return res;
     }
 
 
-    @PostMapping("/users/coach")
+    @PostMapping(value = "/users/coach", produces = {MediaType.APPLICATION_JSON_VALUE})
     public ResponseEntity<Object> createCoachWithMultiPart(@RequestPart(value = "id_proof", required = false) MultipartFile id_proof,
                                                            @RequestPart(value = "profile_image", required = false) MultipartFile profile_image,
                                                            @RequestParam("user_name") String username,
@@ -139,7 +148,7 @@ public class UserResource {
 
     }
 
-    @GetMapping("/users/logon")
+    @GetMapping(value = "/users/logon", produces = {MediaType.APPLICATION_JSON_VALUE})
     public User findByUserId(@RequestParam("username") String id) {
         Optional<User> user = Optional.ofNullable(userRepository.findByUsername(id));
         if(!user.isPresent())
